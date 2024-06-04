@@ -6,8 +6,10 @@ FOLDER_RELEASES=$FORGE_SITE_PATH/releases
 FOLDER_DEPLOYING_RELEASE=$FOLDER_RELEASES/$FORGE_DEPLOY_COMMIT-$FORGE_DEPLOYMENT_ID
 FOLDER_LIVE_RELEASE=$FORGE_SITE_PATH/current
 
-echo "Ensuring directories are in place"
-mkdir -p $FORGE_SITE_PATH/{deploy-cache,releases,shared}
+echo "Ensuring directories exist"
+mkdir -p $FOLDER_DEPLOY_CACHE
+mkdir -p $FOLDER_PERSISTENT
+mkdir -p $FOLDER_RELEASES
 
 echo "Pulling latest changes from repo"
 cd $FORGE_SITE_PATH/deploy-cache && git pull origin $FORGE_SITE_BRANCH
