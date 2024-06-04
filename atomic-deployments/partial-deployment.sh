@@ -21,11 +21,18 @@ mkdir -p $FOLDER_DEPLOYING_RELEASE
 cp -a $FOLDER_DEPLOY_CACHE/. $FOLDER_DEPLOYING_RELEASE/
 
 echo "Symlinking persistent files & directories"
-[ -f $FOLDER_PERSISTENT/.env ] && ln -nfs $FOLDER_PERSISTENT/.env $FOLDER_DEPLOYING_RELEASE
-[ -d $FOLDER_PERSISTENT/data ] && ln -nfs $FOLDER_PERSISTENT/data/* $FOLDER_DEPLOYING_RELEASE/data/
-[ -d $FOLDER_PERSISTENT/storage ] && ln -nfs $FOLDER_PERSISTENT/storage/* $FOLDER_DEPLOYING_RELEASE/storage/
-[ -d $FOLDER_PERSISTENT/web/media ] && ln -nfs $FOLDER_PERSISTENT/web/media/* $FOLDER_DEPLOYING_RELEASE/web/media/
-[ -d $FOLDER_PERSISTENT/web/cpresources ] && ln -nfs $FOLDER_PERSISTENT/web/cpresources $FOLDER_DEPLOYING_RELEASE/web/cpresources
+directories=(
+	"$FOLDER_PERSISTENT/.env:$FOLDER_DEPLOYING_RELEASE/.env"
+	"$FOLDER_PERSISTENT/data:$FOLDER_DEPLOYING_RELEASE/data"
+	"$FOLDER_PERSISTENT/storage:$FOLDER_DEPLOYING_RELEASE/storage"
+	"$FOLDER_PERSISTENT/web/media:$FOLDER_DEPLOYING_RELEASE/web/media"
+	"$FOLDER_PERSISTENT/web/cpresources:$FOLDER_DEPLOYING_RELEASE/web/cpresources"
+)
+for dir in "${directories[@]}"; do
+	source="${dir%%:*}"
+	target="${dir#*:}"
+	[ -e "$source" ] && rm -rf "$target" && ln -nfs "$source" "$target"
+done
 
 echo "Symlinking \`current\` to \`releases/$FORGE_DEPLOY_COMMIT-$FORGE_DEPLOYMENT_ID\`"
 rm -f $FOLDER_LIVE_RELEASE
