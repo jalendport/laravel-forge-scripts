@@ -43,6 +43,6 @@ ln -s $FOLDER_DEPLOYING_RELEASE $FOLDER_LIVE_RELEASE
 
 echo "Removing old releases"
 cd $FOLDER_RELEASES
-ls -t | tail -n +$((CONF_KEEP_RELEASES + 1)) | xargs rm -rf
+ls -t | tail -n +$((CONFIG_KEEP_RELEASES + 1)) | xargs rm -rf
 
 echo "Done!"
