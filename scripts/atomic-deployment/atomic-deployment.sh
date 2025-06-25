@@ -53,13 +53,13 @@ mkdir -p $FOLDER_PERSISTENT
 mkdir -p $FOLDER_RELEASES
 
 if [ -d "/tmp/.git-$FORGE_SITE_ID" ]; then
-	echo "Moving git metadata from temporary location to `persistent`"
+	echo "Moving git metadata from temporary location to \`persistent\`"
 	mv "/tmp/.git-$FORGE_SITE_ID" "$FOLDER_PERSISTENT/.git-$FORGE_SITE_ID"
 fi
 
 if [ "$CONFIG_DEPLOYMENT_TYPE" = "complete" ]; then
 	if [ ! -d "$FOLDER_DEPLOY_CACHE/.git" ] && [ -d "$FOLDER_PERSISTENT/.git-$FORGE_SITE_ID" ]; then
-		echo "Copying git metadata from `persistent` to `deploy-cache`"
+		echo "Copying git metadata from \`persistent\` to \`deploy-cache\`"
 		cp -a "$FOLDER_PERSISTENT/.git-$FORGE_SITE_ID" "$FOLDER_DEPLOY_CACHE/.git"
 	fi
 
