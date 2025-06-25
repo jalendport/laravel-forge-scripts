@@ -50,7 +50,7 @@ your-site/
 ### Deployment Process
 
 1. Creates necessary directories if they don't exist
-2. Pulls latest files from the repo (if using "complete" deployment type)
+2. Fetches latest files from the repo (if using "complete" deployment type)
 3. Creates a new release directory with a unique identifier
 4. Copies files from deploy-cache to the new release directory
 5. Symlinks persistent files and directories

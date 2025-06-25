@@ -64,10 +64,12 @@ if [ "$CONFIG_DEPLOYMENT_TYPE" = "complete" ]; then
 	fi
 
 	if [ -d "$FOLDER_DEPLOY_CACHE/.git" ]; then
-		echo "Pulling latest changes from repo"
-		cd $FOLDER_DEPLOY_CACHE && git pull origin $FORGE_SITE_BRANCH
+		echo "Fetching latest changes from repo"
+		cd $FOLDER_DEPLOY_CACHE && git fetch origin $FORGE_SITE_BRANCH
+		echo "Resetting to latest commit"
+		git reset --hard origin/$FORGE_SITE_BRANCH
 	else
-		echo "Warning: No git metadata found for pulling changes"
+		echo "Warning: No git metadata found for fetching changes"
 	fi
 fi
 
@@ -100,6 +102,7 @@ for dir in "${directories[@]}"; do
 	source="${dir%%:*}"
 	target="${dir#*:}"
 	mkdir -p "$source"
+	mkdir -p "$(dirname "$target")"
 	rm -rf "$target" && ln -nfs "$source" "$target"
 done
 
