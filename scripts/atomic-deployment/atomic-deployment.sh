@@ -41,7 +41,9 @@ FOLDER_DEPLOYING_RELEASE=$FOLDER_RELEASES/$FORGE_DEPLOY_COMMIT-$FORGE_DEPLOYMENT
 FOLDER_LIVE_RELEASE=$FORGE_SITE_PATH/current
 
 if [ -d "$FORGE_SITE_PATH/.git" ]; then
-	echo "Removing git repo"
+	echo "Moving git metadata to temporary location"
+	mv "$FORGE_SITE_PATH/.git" "/tmp/.git-$FORGE_SITE_ID"
+	echo "Removing remaining files from site path"
 	rm -rf -- "$FORGE_SITE_PATH"/* "$FORGE_SITE_PATH"/.[^.]*
 fi
 
@@ -50,9 +52,23 @@ mkdir -p $FOLDER_DEPLOY_CACHE
 mkdir -p $FOLDER_PERSISTENT
 mkdir -p $FOLDER_RELEASES
 
+if [ -d "/tmp/.git-$FORGE_SITE_ID" ]; then
+	echo "Moving git metadata from temporary location to `persistent`"
+	mv "/tmp/.git-$FORGE_SITE_ID" "$FOLDER_PERSISTENT/.git-$FORGE_SITE_ID"
+fi
+
 if [ "$CONFIG_DEPLOYMENT_TYPE" = "complete" ]; then
-	echo "Pulling latest changes from repo"
-	cd $FORGE_SITE_PATH/deploy-cache && git pull origin $FORGE_SITE_BRANCH
+	if [ ! -d "$FOLDER_DEPLOY_CACHE/.git" ] && [ -d "$FOLDER_PERSISTENT/.git-$FORGE_SITE_ID" ]; then
+		echo "Copying git metadata from `persistent` to `deploy-cache`"
+		cp -a "$FOLDER_PERSISTENT/.git-$FORGE_SITE_ID" "$FOLDER_DEPLOY_CACHE/.git"
+	fi
+
+	if [ -d "$FOLDER_DEPLOY_CACHE/.git" ]; then
+		echo "Pulling latest changes from repo"
+		cd $FOLDER_DEPLOY_CACHE && git pull origin $FORGE_SITE_BRANCH
+	else
+		echo "Warning: No git metadata found for pulling changes"
+	fi
 fi
 
 if [ -d "$FOLDER_DEPLOYING_RELEASE" ];
